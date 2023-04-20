@@ -25,5 +25,3 @@ This is a technical challenge to ingest data from an API of your choosing into A
   - Creating policy, role and attaching policy to the role.
   - Creating the lambda function and scheduling it using the cloudwatch every 30 mins.
   - Attaching lambda function to event and then to the rule.
-
-  

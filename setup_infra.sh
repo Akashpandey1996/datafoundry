@@ -51,11 +51,12 @@ echo '[
     "Id": "1",
     "Arn": "arn:aws:lambda:'$AWS_REGION':'$AWS_ID':function:datafoundry"
   }
-]' > ./targets.json
+]' > ./targets.json 
 
+echo "Script executed from: ${PWD}"
 
 echo "Packaging local lambda_function.py"
-cd datafoundry
+cd ./datafoundry
 zip -r ../myDeploymentPackage.zip .
 cd ..
 
@@ -71,7 +72,7 @@ aws iam create-role --role-name lambda-s3-role --assume-role-policy-document fil
 echo "Attaching Policy to Role"
 aws iam attach-role-policy --role-name lambda-s3-role --policy-arn arn:aws:iam::$AWS_ID:policy/AWSLambdaS3Policy --output text >> setup.log
 
-echo "Sleeping 10 seconds to allow policy to attach to role"
+echo "Waiting 10 seconds to allow policy to attach to role"
 sleep 10s
 
 echo "Creating Lambda function"

@@ -61,28 +61,27 @@ zip -r ../myDeploymentPackage.zip .
 cd ..
 
 echo "Creating bucket "$1""
-aws s3api create-bucket --acl public-read-write --bucket $1 --output text > setup.log
+aws s3api create-bucket --acl public-read-write --bucket $1
 
 echo "Creating Policy"
-aws iam create-policy --policy-name AWSLambdaS3Policy --policy-document file://policy --output text >> setup.log
+aws iam create-policy --policy-name AWSLambdaS3Policy --policy-document file://policy 
 
 echo "Creating Role"
-aws iam create-role --role-name lambda-s3-role --assume-role-policy-document file://trust-policy.json --output text >> setup.log
+aws iam create-role --role-name lambda-s3-role --assume-role-policy-document file://trust-policy.json 
 
 echo "Attaching Policy to Role"
-aws iam attach-role-policy --role-name lambda-s3-role --policy-arn arn:aws:iam::$AWS_ID:policy/AWSLambdaS3Policy --output text >> setup.log
-
+aws iam attach-role-policy --role-name lambda-s3-role --policy-arn arn:aws:iam::$AWS_ID:policy/AWSLambdaS3Policy 
 echo "Waiting 10 seconds to allow policy to attach to role"
 sleep 10s
 
 echo "Creating Lambda function"
-aws lambda create-function --function-name datafoundry --runtime python3.7 --role  arn:aws:iam::$AWS_ID":"role/lambda-s3-role --handler lambda_function.lambda_handler --zip-file fileb://myDeploymentPackage.zip  --timeout 60 --output text >> setup.log
+aws lambda create-function --function-name datafoundry --runtime python3.7 --role  arn:aws:iam::$AWS_ID":"role/lambda-s3-role --handler lambda_function.lambda_handler --zip-file fileb://myDeploymentPackage.zip  --timeout 60 
 
 echo "Creating cloudwatch rule to schedule lambda every 30 minutes"
-aws events put-rule --name my-scheduled-rule --schedule-expression 'rate(30 minutes)' --output text >> setup.log
+aws events put-rule --name my-scheduled-rule --schedule-expression 'rate(30 minutes)' 
 
 echo "Attaching lambda function to event and then to the rule"
-aws lambda add-permission --function-name datafoundry --statement-id my-scheduled-event --action 'lambda:InvokeFunction' --principal events.amazonaws.com --source-arn arn:aws:events:$AWS_REGION:$AWS_ID:rule/my-scheduled-rule --output text >> setup.log
-aws events put-targets --rule my-scheduled-rule --targets file://targets.json --output text >> setup.log
+aws lambda add-permission --function-name datafoundry --statement-id my-scheduled-event --action 'lambda:InvokeFunction' --principal events.amazonaws.com --source-arn arn:aws:events:$AWS_REGION:$AWS_ID:rule/my-scheduled-rule 
+aws events put-targets --rule my-scheduled-rule --targets file://targets.json 
 
 echo "Done"

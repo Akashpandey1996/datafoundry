@@ -9,7 +9,7 @@ import urllib3
 CHUNK_SIZE = 1000
 s3_client = boto3.client("s3")
 LOCAL_FILE_SYS = "/tmp"
-S3_BUCKET = "your-s3-bucket"
+S3_BUCKET = "datafoundrytechchallenge"
 
 # Create the function to get number of records 
 def get_num_records():
@@ -67,7 +67,7 @@ def download_data(N):
 
 
 # Lambda function to get the records
-def lambda_function(event,context):
+def lambda_handler(event,context):
    N= get_num_records()
    download_data(N)
    key = _get_key()
